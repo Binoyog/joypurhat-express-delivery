@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | Joypurhat Express Delivery</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
+}
+.header{
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-size:20px;
+  font-weight:700;
+  color:#00d09c;
+}
+.logout{
+  background:#ff4d4d;
+  border:none;
+  padding:8px 14px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+}
+.card{
+  margin:20px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);
+  border-radius:18px;
+  padding:20px;
+}
+.user-info p{
+  margin:6px 0;
+  font-size:14px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  margin-top:20px;
+}
+.item{
+  background:rgba(255,255,255,0.12);
+  border-radius:14px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="logo">জয়পুরহাট এক্সপ্রেস</div>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="card">
+  <h3>👤 আপনার তথ্য</h3>
+  <div class="user-info">
+    <p>নাম: <span id="name">লোড হচ্ছে...</span></p>
+    <p>মোবাইল: <span id="phone">লোড হচ্ছে...</span></p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>🛒 সার্ভিস সমূহ</h3>
+  <div class="grid">
+    <div class="item">মুদিখানা</div>
+    <div class="item">ফার্মেসি</div>
+    <div class="item">রেস্টুরেন্ট</div>
+    <div class="item">কাঁচা বাজার</div>
+    <div class="item">গ্যাস সিলিন্ডার</div>
+    <div class="item">ডেলিভারি স্ট্যাটাস</div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } 
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } 
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* 🔐 SECURITY CHECK */
+onAuthStateChanged(auth, async (user) => {
+  if(!user){
+    // ❌ Login ছাড়া access না
+    location.href = "index.html";
+    return;
+  }
+
+  // ✅ Logged in user
+  const snap = await getDoc(doc(db,"users",user.uid));
+  if(snap.exists()){
+    document.getElementById("name").innerText = snap.data().name;
+    document.getElementById("phone").innerText = snap.data().phone;
+  }
+});
+
+/* 🚪 Logout */
+window.logout = async () => {
+  await signOut(auth);
+  location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
