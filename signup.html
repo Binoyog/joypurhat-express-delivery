@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joypurhat Express Delivery | Sign Up</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+}
+.card{
+  width:100%;
+  max-width:380px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+.logo{
+  text-align:center;
+  font-size:22px;
+  font-weight:700;
+  color:#00d09c;
+}
+.subtitle{
+  text-align:center;
+  margin-top:6px;
+  opacity:0.8;
+  font-size:13px;
+}
+.tabs{
+  display:flex;
+  margin:22px 0 12px;
+}
+.tab{
+  flex:1;
+  text-align:center;
+  padding:8px;
+  cursor:pointer;
+  opacity:0.6;
+  border-bottom:2px solid transparent;
+}
+.tab.active{
+  opacity:1;
+  border-bottom:2px solid #00d09c;
+}
+.input-group{
+  margin-top:12px;
+}
+label{
+  font-size:12px;
+  opacity:0.85;
+  display:block;
+  margin-bottom:5px;
+}
+input, textarea{
+  width:100%;
+  padding:12px;
+  border:none;
+  outline:none;
+  border-radius:12px;
+  background:rgba(255,255,255,0.12);
+  color:#fff;
+  font-size:13px;
+}
+textarea{
+  resize:none;
+  height:80px;
+}
+input.error, textarea.error{
+  border:1px solid #ff6b6b;
+}
+button{
+  width:100%;
+  margin-top:20px;
+  padding:13px;
+  border:none;
+  border-radius:14px;
+  background:#00d09c;
+  color:#000;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="logo">জয়পুরহাট এক্সপ্রেস ডেলিভারি</div>
+  <div class="subtitle">নতুন একাউন্ট তৈরি করুন</div>
+
+  <div class="tabs">
+    <div class="tab" onclick="location.href='index.html'">Log in</div>
+    <div class="tab active">Sign up</div>
+  </div>
+
+  <div class="input-group">
+    <label>আপনার নাম</label>
+    <input id="name" type="text" placeholder="পূর্ণ নাম লিখুন">
+  </div>
+
+  <div class="input-group">
+    <label>মোবাইল নাম্বার</label>
+    <input id="phone" type="tel" placeholder="01XXXXXXXXX">
+  </div>
+
+  <div class="input-group">
+    <label>পাসওয়ার্ড</label>
+    <input id="password" type="password" placeholder="পাসওয়ার্ড লিখুন">
+  </div>
+
+  <div class="input-group">
+    <label>পাসওয়ার্ড পুনরায়</label>
+    <input id="confirmPassword" type="password" placeholder="পাসওয়ার্ড পুনরায় লিখুন">
+  </div>
+
+  <div class="input-group">
+    <label>সম্পূর্ণ ঠিকানা</label>
+    <textarea id="address" placeholder="ডেলিভারির জন্য সম্পূর্ণ ঠিকানা লিখুন"></textarea>
+  </div>
+
+  <button onclick="signup()">Sign Up</button>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+function setError(el){
+  el.classList.add("error");
+  el.value = "";
+  el.placeholder = "সঠিক তথ্য দিন";
+}
+
+window.signup = async () => {
+  const name = document.getElementById("name");
+  const phone = document.getElementById("phone");
+  const password = document.getElementById("password");
+  const confirmPassword = document.getElementById("confirmPassword");
+  const address = document.getElementById("address");
+
+  [name, phone, password, confirmPassword, address].forEach(i => i.classList.remove("error"));
+
+  let valid = true;
+
+  if(!name.value.trim()){ setError(name); valid=false; }
+  if(!phone.value.trim() || !phone.value.startsWith("01")){ setError(phone); valid=false; }
+  if(!password.value){ setError(password); valid=false; }
+  if(!confirmPassword.value || password.value !== confirmPassword.value){
+    setError(confirmPassword); valid=false;
+  }
+  if(!address.value.trim()){ setError(address); valid=false; }
+
+  if(!valid) return;
+
+  const email = phone.value.trim() + "@joypurhat.com";
+
+  try{
+    const userCred = await createUserWithEmailAndPassword(auth, email, password.value);
+
+    await setDoc(doc(db,"users",userCred.user.uid),{
+      name: name.value.trim(),
+      phone: phone.value.trim(),
+      address: address.value.trim(),
+      role: "customer",
+      createdAt: serverTimestamp()
+    });
+
+    location.href = "index.html";
+  }catch(err){
+    alert(err.message);
+  }
+};
+</script>
+
+</body>
+</html>
