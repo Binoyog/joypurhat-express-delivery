@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joypurhat Express Delivery | Dashboard</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
+}
+
+/* HEADER */
+.header{
+  padding:16px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-size:20px;
+  font-weight:700;
+  color:#00d09c;
+}
+.profile-btn{
+  background:rgba(255,255,255,0.15);
+  border:none;
+  padding:8px 14px;
+  border-radius:20px;
+  color:#fff;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* PROFILE POPUP */
+.profile-card{
+  position:fixed;
+  top:70px;
+  right:16px;
+  width:260px;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(12px);
+  border-radius:16px;
+  padding:16px;
+  display:none;
+  z-index:99;
+}
+.profile-card h4{
+  margin:0 0 10px;
+}
+.profile-card p{
+  margin:6px 0;
+  font-size:14px;
+}
+.logout{
+  margin-top:12px;
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:#ff4d4d;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* SERVICES */
+.section{
+  padding:10px 18px;
+}
+.section h3{
+  margin-bottom:12px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+.service{
+  background:rgba(255,255,255,0.12);
+  border-radius:18px;
+  padding:22px 10px;
+  text-align:center;
+  cursor:pointer;
+}
+.icon{
+  font-size:42px;
+  margin-bottom:10px;
+}
+.service span{
+  font-weight:600;
+  font-size:15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">জয়পুরহাট এক্সপ্রেস ডেলিভারি</div>
+  <button class="profile-btn" onclick="toggleProfile()">👤 প্রোফাইল</button>
+</div>
+
+<!-- PROFILE POPUP -->
+<div class="profile-card" id="profileCard">
+  <h4>👤 গ্রাহকের তথ্য</h4>
+  <p>নাম: <span id="name">লোড হচ্ছে...</span></p>
+  <p>ফোন: <span id="phone">লোড হচ্ছে...</span></p>
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<!-- SERVICES -->
+<div class="section">
+  <h3>🛒 সার্ভিস সমূহ</h3>
+  <div class="grid">
+    <div class="service">
+      <div class="icon">🛒</div>
+      <span>মুদিখানা</span>
+    </div>
+    <div class="service">
+      <div class="icon">💊</div>
+      <span>ফার্মেসি</span>
+    </div>
+    <div class="service">
+      <div class="icon">🍔</div>
+      <span>রেস্টুরেন্ট</span>
+    </div>
+    <div class="service">
+      <div class="icon">🥬</div>
+      <span>কাঁচা বাজার</span>
+    </div>
+    <div class="service">
+      <div class="icon">🔥</div>
+      <span>গ্যাস সিলিন্ডার</span>
+    </div>
+    <div class="service">
+      <div class="icon">🚚</div>
+      <span>ডেলিভারি স্ট্যাটাস</span>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getFirestore, doc, getDoc }
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* 🔐 SECURITY */
+onAuthStateChanged(auth, async (user) => {
+  if(!user){
+    location.href = "index.html";
+    return;
+  }
+  const snap = await getDoc(doc(db,"users",user.uid));
+  if(snap.exists()){
+    document.getElementById("name").innerText = snap.data().name;
+    document.getElementById("phone").innerText = snap.data().phone;
+  }
+});
+
+/* PROFILE TOGGLE */
+window.toggleProfile = () => {
+  const card = document.getElementById("profileCard");
+  card.style.display = card.style.display === "block" ? "none" : "block";
+};
+
+/* LOGOUT */
+window.logout = async () => {
+  await signOut(auth);
+  location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
