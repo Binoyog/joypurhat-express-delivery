@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0f2d2f;
+  color:#fff;
+}
+
+/* HEADER */
+.header{
+  padding:15px;
+  background:#0a3a3d;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header-right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.admin-tag{
+  background:red;
+  padding:6px 12px;
+  border-radius:20px;
+  font-weight:bold;
+  font-size:13px;
+}
+
+.logout-btn{
+  background:#ff5252;
+  border:none;
+  padding:6px 14px;
+  border-radius:20px;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* CARD */
+.card{
+  background:#123c40;
+  margin:15px;
+  padding:15px;
+  border-radius:12px;
+}
+
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+  font-size:15px;
+}
+
+button{
+  background:#00e6b8;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h3>🛡️ ADMIN DASHBOARD</h3>
+
+  <div class="header-right">
+    <div class="admin-tag">ADMIN</div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- ADD PRODUCT -->
+<div class="card">
+  <h3>➕ প্রোডাক্ট যোগ করুন</h3>
+
+  <input id="productName" placeholder="Product Name">
+
+  <select id="productCategory">
+    <option value="মুদিখানা">মুদিখানা</option>
+    <option value="সবজি">সবজি</option>
+    <option value="অন্যান্য">অন্যান্য</option>
+  </select>
+
+  <input id="productPrice" type="number" placeholder="Price">
+
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<script type="module" src="admin.js"></script>
+
+<script>
+/* SECURITY CHECK */
+if (localStorage.getItem("admin") !== "true") {
+  window.location.href = "admin-login.html";
+}
+
+/* LOGOUT */
+function logout(){
+  localStorage.removeItem("admin");
+  window.location.href = "admin-login.html";
+}
+</script>
+
+</body>
+</html>
