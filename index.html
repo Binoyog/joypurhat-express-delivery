@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Binoyog | Login</title>
+<title>Joypurhat Express Delivery | Login</title>
 
 <style>
 *{
@@ -21,7 +21,7 @@ body{
   color:#fff;
 }
 
-/* Glass Card */
+/提醒
 .card{
   width:100%;
   max-width:380px;
@@ -34,7 +34,7 @@ body{
 
 .logo{
   text-align:center;
-  font-size:34px;
+  font-size:22px;
   font-weight:700;
   color:#00d09c;
 }
@@ -43,6 +43,7 @@ body{
   text-align:center;
   margin-top:8px;
   opacity:0.8;
+  font-size:14px;
 }
 
 .tabs{
@@ -57,6 +58,7 @@ body{
   cursor:pointer;
   opacity:0.6;
   border-bottom:2px solid transparent;
+  transition:0.3s;
 }
 
 .tab.active{
@@ -105,6 +107,7 @@ button:active{
   margin-top:14px;
   color:#00d09c;
   font-size:14px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -117,7 +120,7 @@ button:active{
 
   <div class="tabs">
     <div class="tab active">Log in</div>
-    <div class="tab">Sign up</div>
+    <div class="tab" onclick="goSignup()">Sign up</div>
   </div>
 
   <div class="input-group">
@@ -130,8 +133,18 @@ button:active{
 
   <button>Log in</button>
 
-  <div class="forgot">Forgot password?</div>
+  <div class="forgot" onclick="goForgot()">Forgot password?</div>
 </div>
+
+<script>
+function goSignup(){
+  window.location.href = "signup.html";
+}
+
+function goForgot(){
+  window.location.href = "forgot-password.html";
+}
+</script>
 
 </body>
 </html>
