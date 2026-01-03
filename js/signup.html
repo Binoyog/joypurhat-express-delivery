@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Signup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<h3>মোবাইল নাম্বার দিন</h3>
+
+<input id="phone" placeholder="+8801XXXXXXXXX">
+<button onclick="sendOTP()">OTP পাঠান</button>
+
+<div id="recaptcha-container"></div>
+
+<script type="module">
+import { auth, setupRecaptcha } from "./js/firebase.js";
+import { signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+setupRecaptcha("recaptcha-container");
+
+window.sendOTP = async () => {
+  const phone = document.getElementById("phone").value;
+  if (!phone.startsWith("+880")) {
+    alert("নাম্বার +880 দিয়ে দিন");
+    return;
+  }
+
+  try {
+    window.confirmationResult =
+      await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
+    localStorage.setItem("phone", phone);
+    location.href = "login.html";
+  } catch (e) {
+    alert(e.message);
+  }
+};
+</script>
+</body>
+</html>
