@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard | Joypurhat Express</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Firebase -->
+<script type="module" src="js/firebase.js"></script>
+<script type="module" src="js/admin.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f2d2f;
+  color:#fff;
+}
+
+/* ===== HEADER ===== */
+.admin-header{
+  background:#062b2e;
+  padding:15px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.4);
+}
+
+.admin-title{
+  font-size:20px;
+  font-weight:bold;
+  color:#00e6c3;
+}
+
+.admin-badge{
+  background:#ff3b3b;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+/* ===== CONTAINER ===== */
+.container{
+  padding:20px;
+}
+
+.section-title{
+  margin:20px 0 10px;
+  font-size:18px;
+  color:#00e6c3;
+}
+
+/* ===== CARD ===== */
+.card{
+  background:#1e3d40;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+}
+
+/* ===== FORM ===== */
+input, select, button{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border:none;
+  border-radius:8px;
+  font-size:14px;
+}
+
+input, select{
+  background:#ecf0f1;
+}
+
+button{
+  background:#00e6c3;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+/* ===== ORDER LIST ===== */
+.order{
+  background:#163538;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.status{
+  font-size:13px;
+  margin-top:5px;
+  color:#ffd369;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== ADMIN HEADER ===== -->
+<div class="admin-header">
+  <div class="admin-title">🛡️ এডমিন ড্যাশবোর্ড</div>
+  <div class="admin-badge">ADMIN</div>
+</div>
+
+<div class="container">
+
+  <!-- ===== ADD PRODUCT ===== -->
+  <div class="section-title">➕ নতুন প্রোডাক্ট যোগ করুন</div>
+
+  <div class="card">
+    <input type="text" id="productName" placeholder="প্রোডাক্ট নাম">
+    
+    <select id="category">
+      <option value="">ক্যাটাগরি নির্বাচন করুন</option>
+      <option value="mudikhana">মুদিখানা</option>
+      <option value="pharmacy">ফার্মেসি</option>
+      <option value="restaurant">রেস্টুরেন্ট</option>
+      <option value="vegetable">কাঁচা বাজার</option>
+      <option value="gas">গ্যাস সিলিন্ডার</option>
+    </select>
+
+    <input type="number" id="price" placeholder="দাম (৳)">
+    <input type="text" id="imageUrl" placeholder="ছবির URL">
+
+    <button onclick="addProduct()">প্রোডাক্ট যোগ করুন</button>
+  </div>
+
+  <!-- ===== ORDERS ===== -->
+  <div class="section-title">📦 অর্ডার সমূহ</div>
+
+  <div id="orderList"></div>
+
+</div>
+
+</body>
+</html>
