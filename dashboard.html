@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joypurhat Express Delivery | Dashboard</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+}
+body{
+  margin:0;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
+  min-height:100vh;
+}
+.header{
+  padding:18px;
+  text-align:center;
+  font-size:20px;
+  font-weight:700;
+  color:#00d09c;
+}
+.section{
+  padding:15px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+.card{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);
+  border-radius:18px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(0,0,0,0.4);
+  transition:0.3s;
+}
+.card:hover{
+  transform:scale(1.03);
+}
+.card i{
+  font-size:40px;
+  margin-bottom:10px;
+  color:#00d09c;
+}
+.card span{
+  display:block;
+  font-size:15px;
+}
+
+/* Product list */
+.product-box{
+  background:rgba(255,255,255,0.08);
+  margin:12px;
+  border-radius:16px;
+  padding:12px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.product-box img{
+  width:70px;
+  height:70px;
+  border-radius:12px;
+  object-fit:cover;
+}
+.product-info{
+  flex:1;
+}
+.product-info h4{
+  margin:0;
+  font-size:15px;
+}
+.product-info p{
+  margin:4px 0;
+  font-size:13px;
+  opacity:0.8;
+}
+.order-btn{
+  padding:8px 12px;
+  background:#00d09c;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* Hidden sections */
+.hidden{
+  display:none;
+}
+
+.back{
+  margin:10px;
+  text-align:center;
+  color:#00d09c;
+  cursor:pointer;
+}
+.status{
+  background:rgba(255,255,255,0.08);
+  margin:12px;
+  border-radius:14px;
+  padding:14px;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">জয়পুরহাট এক্সপ্রেস ডেলিভারি</div>
+
+<!-- CATEGORY -->
+<div class="section" id="categorySection">
+  <div class="grid">
+    <div class="card" onclick="openProducts('grocery')">
+      <i>🛒</i><span>মুদিখানা</span>
+    </div>
+    <div class="card" onclick="openProducts('pharmacy')">
+      <i>💊</i><span>ফার্মেসি</span>
+    </div>
+    <div class="card" onclick="openProducts('restaurant')">
+      <i>🍔</i><span>রেস্টুরেন্ট</span>
+    </div>
+    <div class="card" onclick="openProducts('market')">
+      <i>🥬</i><span>কাঁচা বাজার</span>
+    </div>
+    <div class="card" onclick="openProducts('gas')">
+      <i>🔥</i><span>গ্যাস সিলিন্ডার</span>
+    </div>
+    <div class="card" onclick="openDelivery()">
+      <i>🚚</i><span>ডেলিভারি</span>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="productSection" class="hidden">
+  <div class="back" onclick="goBack()">← ফিরে যান</div>
+  <div id="productList"></div>
+</div>
+
+<!-- DELIVERY STATUS -->
+<div id="deliverySection" class="hidden">
+  <div class="back" onclick="goBack()">← ফিরে যান</div>
+  <div class="status">📦 অর্ডার #1021 — প্রস্তুত হচ্ছে</div>
+  <div class="status">🚚 অর্ডার #1018 — ডেলিভারিতে আছে</div>
+  <div class="status">✅ অর্ডার #1012 — ডেলিভারি সম্পন্ন</div>
+</div>
+
+<script>
+const products = {
+  grocery:[
+    {name:"চাল ৫ কেজি", price:"৳350", img:"https://i.imgur.com/5K0b1.jpg"},
+    {name:"ডাল ২ কেজি", price:"৳260", img:"https://i.imgur.com/5K0b1.jpg"}
+  ],
+  pharmacy:[
+    {name:"প্যারাসিটামল", price:"৳40", img:"https://i.imgur.com/5K0b1.jpg"}
+  ],
+  restaurant:[
+    {name:"চিকেন বার্গার", price:"৳180", img:"https://i.imgur.com/5K0b1.jpg"}
+  ],
+  market:[
+    {name:"সবজি প্যাক", price:"৳120", img:"https://i.imgur.com/5K0b1.jpg"}
+  ],
+  gas:[
+    {name:"LP Gas 12kg", price:"৳1450", img:"https://i.imgur.com/5K0b1.jpg"}
+  ]
+};
+
+function openProducts(type){
+  document.getElementById("categorySection").style.display="none";
+  document.getElementById("productSection").style.display="block";
+  const list=document.getElementById("productList");
+  list.innerHTML="";
+  products[type].forEach(p=>{
+    list.innerHTML+=`
+      <div class="product-box">
+        <img src="${p.img}">
+        <div class="product-info">
+          <h4>${p.name}</h4>
+          <p>${p.price}</p>
+        </div>
+        <button class="order-btn" onclick="orderNow('${p.name}')">অর্ডার নাও</button>
+      </div>`;
+  });
+}
+
+function orderNow(name){
+  alert(name+" অর্ডার সফলভাবে নেওয়া হয়েছে");
+}
+
+function openDelivery(){
+  document.getElementById("categorySection").style.display="none";
+  document.getElementById("deliverySection").style.display="block";
+}
+
+function goBack(){
+  document.getElementById("categorySection").style.display="block";
+  document.getElementById("productSection").style.display="none";
+  document.getElementById("deliverySection").style.display="none";
+}
+</script>
+
+</body>
+</html>
