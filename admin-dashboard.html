@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard | Joypurhat Express</title>
+<title>ADMIN | Joypurhat Express Delivery</title>
 
 <style>
 body{
@@ -17,6 +17,18 @@ body{
   justify-content:space-between;
   align-items:center;
   padding:15px 20px;
+  background:rgba(0,0,0,0.3);
+}
+.header h2{
+  margin:0;
+  color:#00ffd5;
+}
+.badge{
+  background:#ff5252;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:12px;
+  margin-left:8px;
 }
 .logout{
   background:#ff5252;
@@ -66,27 +78,31 @@ button{
 }
 .small-btn{
   padding:6px 10px;
-  background:#ff9800;
   border:none;
   border-radius:8px;
   cursor:pointer;
 }
 .del-btn{
   background:#ff5252;
+  color:#fff;
 }
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <h3>Admin Dashboard</h3>
+  <div>
+    <h2>ADMIN DASHBOARD <span class="badge">ADMIN</span></h2>
+    <small>Joypurhat Express Delivery</small>
+  </div>
   <button class="logout" onclick="logout()">Logout</button>
 </div>
 
 <div class="container">
 
-  <!-- Add Product -->
+  <!-- ADD PRODUCT -->
   <div class="card">
     <h4>➕ নতুন প্রোডাক্ট যোগ করুন</h4>
 
@@ -106,7 +122,7 @@ button{
     <button onclick="addProduct()">Add Product</button>
   </div>
 
-  <!-- Product List -->
+  <!-- PRODUCT LIST -->
   <div class="card">
     <h4>📦 সব প্রোডাক্ট</h4>
     <div id="productList"></div>
@@ -114,11 +130,14 @@ button{
 
 </div>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import {
+  getFirestore, collection, addDoc, deleteDoc, doc,
+  updateDoc, onSnapshot, serverTimestamp, getDoc
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
@@ -126,54 +145,63 @@ const firebaseConfig = {
   projectId: "joypurhat-express-delivery"
 };
 
-const ADMIN_UID = "PUT_ADMIN_UID_HERE";
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-onAuthStateChanged(auth,user=>{
-  if(!user || user.uid !== ADMIN_UID){
-    location.href="login.html";
+/* 🔐 ADMIN CHECK */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    location.href = "login.html";
+    return;
+  }
+
+  const adminRef = doc(db, "admins", user.uid);
+  const adminSnap = await getDoc(adminRef);
+
+  if (!adminSnap.exists() || adminSnap.data().active !== true) {
+    alert("আপনি এডমিন নন");
+    await signOut(auth);
+    location.href = "login.html";
   }
 });
 
-// Add product
-window.addProduct = async ()=>{
+/* ADD PRODUCT */
+window.addProduct = async () => {
   const c = category.value;
   const n = name.value;
   const p = price.value;
   const i = image.value;
 
-  if(!c||!n||!p||!i){
-    alert("সব তথ্য দিন");
+  if (!c || !n || !p || !i) {
+    alert("সব তথ্য পূরণ করুন");
     return;
   }
 
-  await addDoc(collection(db,"products"),{
-    category:c,
-    name:n,
-    price:Number(p),
-    image:i,
-    active:true,
-    createdAt:serverTimestamp()
+  await addDoc(collection(db, "products"), {
+    category: c,
+    name: n,
+    price: Number(p),
+    image: i,
+    active: true,
+    createdAt: serverTimestamp()
   });
 
-  name.value=price.value=image.value="";
+  name.value = price.value = image.value = "";
 };
 
-// Show products
-onSnapshot(collection(db,"products"),snap=>{
-  productList.innerHTML="";
-  snap.forEach(d=>{
-    const p=d.data();
-    productList.innerHTML+=`
+/* SHOW PRODUCTS */
+onSnapshot(collection(db, "products"), (snap) => {
+  productList.innerHTML = "";
+  snap.forEach(d => {
+    const p = d.data();
+    productList.innerHTML += `
       <div class="product">
         <img src="${p.image}">
         <div style="flex:1">
           <b>${p.name}</b><br>
-          ৳ <input type="number" value="${p.price}" 
-          onchange="updatePrice('${d.id}',this.value)">
+          ৳ <input type="number" value="${p.price}"
+          onchange="updatePrice('${d.id}', this.value)">
         </div>
         <button class="small-btn del-btn"
         onclick="deleteProduct('${d.id}')">Delete</button>
@@ -182,20 +210,24 @@ onSnapshot(collection(db,"products"),snap=>{
   });
 });
 
-window.updatePrice = async(id,val)=>{
-  await updateDoc(doc(db,"products",id),{
-    price:Number(val)
+/* UPDATE PRICE */
+window.updatePrice = async (id, val) => {
+  await updateDoc(doc(db, "products", id), {
+    price: Number(val)
   });
 };
 
-window.deleteProduct = async(id)=>{
-  if(confirm("ডিলিট করবেন?")){
-    await deleteDoc(doc(db,"products",id));
+/* DELETE PRODUCT */
+window.deleteProduct = async (id) => {
+  if (confirm("ডিলিট করবেন?")) {
+    await deleteDoc(doc(db, "products", id));
   }
 };
 
-window.logout = ()=>{
-  signOut(auth);
+/* LOGOUT */
+window.logout = async () => {
+  await signOut(auth);
+  location.href = "login.html";
 };
 </script>
 
