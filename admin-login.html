@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f2d2f;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.login-box{
+  background:#163538;
+  padding:25px;
+  width:90%;
+  max-width:360px;
+  border-radius:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,.5);
+}
+h2{
+  text-align:center;
+  color:#00e6c3;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  font-size:15px;
+}
+button{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#00e6c3;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{opacity:.9;}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+  <h2>🔐 Admin Login</h2>
+
+  <input type="text" id="adminPhone" placeholder="Admin Phone">
+  <input type="password" id="adminPassword" placeholder="Password">
+
+  <button onclick="adminLogin()">Login</button>
+</div>
+
+<!-- JS (IMPORTANT: body শেষে) -->
+<script type="module" src="js/firebase.js"></script>
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
