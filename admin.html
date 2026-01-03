@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{font-family:Arial;background:#f4f6f9;margin:0}
+header{background:#222;color:#fff;padding:15px;text-align:center}
+.order{background:#fff;margin:15px;padding:15px;border-radius:8px}
+select,button{padding:8px;margin-top:8px;width:100%}
+.status{font-weight:bold}
+.pending{color:orange}
+.delivered{color:green}
+.cancelled{color:red}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>🛠 Admin Order Panel</h2>
+</header>
+
+<div id="orders"></div>
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="admin.js"></script>
+</body>
+</html>
