@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard | Joypurhat Express</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:Segoe UI, sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
+}
+.header{
+  padding:18px;
+  font-size:22px;
+  font-weight:700;
+  color:#00ffd5;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.back-btn{
+  cursor:pointer;
+  font-size:22px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  padding:15px;
+}
+.card{
+  background:rgba(255,255,255,0.1);
+  border-radius:16px;
+  padding:25px;
+  text-align:center;
+  cursor:pointer;
+}
+.card span{
+  display:block;
+  margin-top:10px;
+  font-size:15px;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+.modal-box{
+  background:#1f3a44;
+  padding:20px;
+  border-radius:16px;
+  width:90%;
+  max-width:350px;
+}
+.modal-box input{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  margin-top:10px;
+}
+.modal-box button{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#00ffd5;
+  font-weight:700;
+}
+.shop-list{
+  padding:15px;
+}
+.shop{
+  background:rgba(255,255,255,0.12);
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <span class="back-btn" onclick="goBack()">←</span>
+  🛡️ Admin Dashboard
+</div>
+
+<div class="grid">
+  <div class="card" onclick="openShopModal('grocery')">🛒<span>মুদিখানা</span></div>
+  <div class="card" onclick="openShopModal('pharmacy')">💊<span>ফার্মেসি</span></div>
+  <div class="card" onclick="openShopModal('restaurant')">🍔<span>রেস্টুরেন্ট</span></div>
+  <div class="card" onclick="openShopModal('vegetable')">🥬<span>কাঁচা বাজার</span></div>
+  <div class="card" onclick="openShopModal('gas')">🔥<span>গ্যাস সিলিন্ডার</span></div>
+</div>
+
+<div class="shop-list" id="shopList"></div>
+
+<!-- Shop Modal -->
+<div class="modal" id="shopModal">
+  <div class="modal-box">
+    <h3>দোকানের নাম</h3>
+    <input id="shopName" placeholder="Shop Name">
+    <button onclick="saveShop()">Save Shop</button>
+    <button onclick="closeModal()">Back</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs }
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// DOM
+const shopModal = document.getElementById("shopModal");
+const shopName = document.getElementById("shopName");
+const shopList = document.getElementById("shopList");
+
+let currentCategory = "";
+
+/* ===== GLOBAL FUNCTIONS ===== */
+window.openShopModal = (cat)=>{
+  currentCategory = cat;
+  shopModal.style.display = "flex";
+};
+
+window.closeModal = ()=>{
+  shopModal.style.display = "none";
+  shopName.value = "";
+};
+
+window.goBack = ()=>{
+  closeModal();
+};
+
+window.saveShop = async ()=>{
+  const name = shopName.value.trim();
+  if(!name){
+    alert("দোকানের নাম দিন");
+    return;
+  }
+
+  try{
+    await addDoc(collection(db,"shops"),{
+      name: name,
+      category: currentCategory,
+      createdAt: Date.now()
+    });
+
+    closeModal();
+    loadShops();
+  }catch(err){
+    alert("Permission denied / Admin claim missing");
+    console.error(err);
+  }
+};
+
+async function loadShops(){
+  shopList.innerHTML = "";
+  const snap = await getDocs(collection(db,"shops"));
+  snap.forEach(doc=>{
+    const d = doc.data();
+    shopList.innerHTML += `
+      <div class="shop">🏪 ${d.name}</div>
+    `;
+  });
+}
+
+loadShops();
+</script>
+
+</body>
+</html>
