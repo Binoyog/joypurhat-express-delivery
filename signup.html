@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joypurhat Express Delivery | Sign Up</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+}
+.card{
+  width:100%;
+  max-width:380px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);
+  border-radius:18px;
+  padding:25px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+.logo{
+  text-align:center;
+  font-size:22px;
+  font-weight:700;
+  color:#00d09c;
+  white-space:nowrap;
+}
+.subtitle{
+  text-align:center;
+  margin-top:8px;
+  opacity:0.8;
+  font-size:14px;
+}
+.tabs{
+  display:flex;
+  margin:25px 0 15px;
+}
+.tab{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  cursor:pointer;
+  opacity:0.6;
+  border-bottom:2px solid transparent;
+}
+.tab.active{
+  opacity:1;
+  border-bottom:2px solid #00d09c;
+}
+.input-group{
+  margin-top:14px;
+}
+.field-label{
+  font-size:13px;
+  margin-bottom:6px;
+  display:block;
+  opacity:0.85;
+}
+input, textarea{
+  width:100%;
+  padding:14px;
+  border:none;
+  outline:none;
+  border-radius:12px;
+  background:rgba(255,255,255,0.12);
+  color:#fff;
+  font-size:14px;
+}
+textarea{
+  resize:none;
+  height:90px;
+}
+input::placeholder,
+textarea::placeholder{
+  color:rgba(255,255,255,0.6);
+}
+.otp-row{
+  display:flex;
+  gap:10px;
+}
+.otp-row input{
+  flex:1;
+}
+.otp-btn{
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#00d09c;
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+}
+button{
+  width:100%;
+  margin-top:22px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#00d09c;
+  color:#000;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+#recaptcha-container{
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="logo">জয়পুরহাট এক্সপ্রেস ডেলিভারি</div>
+  <div class="subtitle">নতুন একাউন্ট তৈরি করুন</div>
+
+  <div class="tabs">
+    <div class="tab" onclick="goLogin()">Log in</div>
+    <div class="tab active">Sign up</div>
+  </div>
+
+  <!-- Name -->
+  <div class="input-group">
+    <input id="name" type="text" placeholder="আপনার নাম">
+  </div>
+
+  <!-- Phone -->
+  <div class="input-group">
+    <label class="field-label">মোবাইল নাম্বার</label>
+    <div class="otp-row">
+      <input id="phone" type="tel" placeholder="+8801XXXXXXXXX">
+      <button class="otp-btn" onclick="sendOTP()">OTP</button>
+    </div>
+  </div>
+
+  <div id="recaptcha-container"></div>
+
+  <!-- OTP -->
+  <div class="input-group">
+    <input id="otp" type="text" placeholder="ওটিপি লিখুন">
+  </div>
+
+  <!-- Password -->
+  <div class="input-group">
+    <input id="password" type="password" placeholder="পাসওয়ার্ড লিখুন">
+  </div>
+
+  <div class="input-group">
+    <input id="confirmPassword" type="password" placeholder="পাসওয়ার্ড পুনরায় লিখুন">
+  </div>
+
+  <!-- Address -->
+  <div class="input-group">
+    <textarea id="address" placeholder="সম্পূর্ণ ঠিকানা লিখুন"></textarea>
+  </div>
+
+  <button onclick="verifyOTP()">Sign Up</button>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery",
+  storageBucket: "joypurhat-express-delivery.firebasestorage.app",
+  messagingSenderId: "423594341774",
+  appId: "1:423594341774:web:fd33f5a2d368e79e3e20df"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.recaptchaVerifier = new RecaptchaVerifier(
+  auth,
+  'recaptcha-container',
+  { size: 'invisible' }
+);
+
+let confirmationResult;
+
+window.sendOTP = () => {
+  const phone = document.getElementById("phone").value;
+  if(!phone){
+    alert("মোবাইল নাম্বার দিন");
+    return;
+  }
+  signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
+    .then(result => {
+      confirmationResult = result;
+      alert("OTP পাঠানো হয়েছে");
+    })
+    .catch(err => alert(err.message));
+};
+
+window.verifyOTP = () => {
+  const code = document.getElementById("otp").value;
+  if(!confirmationResult){
+    alert("আগে OTP নিন");
+    return;
+  }
+  confirmationResult.confirm(code)
+    .then(() => {
+      alert("Account created successfully!");
+      window.location.href = "dashboard.html";
+    })
+    .catch(() => alert("ভুল OTP"));
+};
+
+window.goLogin = () => {
+  window.location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
