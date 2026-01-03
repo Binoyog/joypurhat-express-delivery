@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forgot Password | Joypurhat Express Delivery</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+}
+.card{
+  width:100%;
+  max-width:380px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);
+  border-radius:18px;
+  padding:25px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+.logo{
+  text-align:center;
+  font-size:22px;
+  font-weight:700;
+  color:#00d09c;
+}
+.subtitle{
+  text-align:center;
+  margin-top:8px;
+  opacity:0.8;
+  font-size:14px;
+}
+.input-group{
+  margin-top:16px;
+}
+input{
+  width:100%;
+  padding:14px;
+  border:none;
+  outline:none;
+  border-radius:12px;
+  background:rgba(255,255,255,0.12);
+  color:#fff;
+  font-size:14px;
+}
+input::placeholder{
+  color:rgba(255,255,255,0.6);
+}
+button{
+  width:100%;
+  margin-top:22px;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#00d09c;
+  color:#000;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+.back{
+  text-align:center;
+  margin-top:14px;
+  font-size:13px;
+  opacity:0.8;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="logo">জয়পুরহাট এক্সপ্রেস ডেলিভারি</div>
+  <div class="subtitle">নতুন পাসওয়ার্ড সেট করুন</div>
+
+  <!-- Phone -->
+  <div class="input-group">
+    <input id="phone" type="tel" placeholder="রেজিস্ট্রেশনকৃত মোবাইল নাম্বার">
+  </div>
+
+  <!-- New password -->
+  <div class="input-group">
+    <input id="newPassword" type="password" placeholder="নতুন পাসওয়ার্ড">
+  </div>
+
+  <!-- Confirm password -->
+  <div class="input-group">
+    <input id="confirmPassword" type="password" placeholder="পুনরায় নতুন পাসওয়ার্ড">
+  </div>
+
+  <button onclick="resetPassword()">Reset Password</button>
+
+  <div class="back" onclick="goLogin()">← লগইনে ফিরে যান</div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, updateDoc, doc } 
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery",
+  storageBucket: "joypurhat-express-delivery.firebasestorage.app",
+  messagingSenderId: "423594341774",
+  appId: "1:423594341774:web:fd33f5a2d368e79e3e20df"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.resetPassword = async () => {
+  const phone = document.getElementById("phone").value;
+  const pass = document.getElementById("newPassword").value;
+  const cpass = document.getElementById("confirmPassword").value;
+
+  if(!phone || !pass || !cpass){
+    alert("সব তথ্য পূরণ করুন");
+    return;
+  }
+  if(pass !== cpass){
+    alert("পাসওয়ার্ড মিলছে না");
+    return;
+  }
+
+  const q = query(collection(db,"users"), where("phone","==",phone));
+  const snap = await getDocs(q);
+
+  if(snap.empty){
+    alert("এই নাম্বার দিয়ে কোন একাউন্ট নেই");
+    return;
+  }
+
+  snap.forEach(async (docu)=>{
+    await updateDoc(doc(db,"users",docu.id),{
+      password: pass
+    });
+  });
+
+  alert("পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে");
+  window.location.href = "index.html";
+};
+
+window.goLogin = () => {
+  window.location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
