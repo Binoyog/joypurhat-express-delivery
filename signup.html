@@ -25,7 +25,7 @@ body{
   background:rgba(255,255,255,0.08);
   backdrop-filter:blur(14px);
   border-radius:18px;
-  padding:25px;
+  padding:22px;
   box-shadow:0 20px 40px rgba(0,0,0,0.4);
 }
 .logo{
@@ -37,18 +37,18 @@ body{
 }
 .subtitle{
   text-align:center;
-  margin-top:8px;
+  margin-top:6px;
   opacity:0.8;
-  font-size:14px;
+  font-size:13px;
 }
 .tabs{
   display:flex;
-  margin:25px 0 15px;
+  margin:22px 0 12px;
 }
 .tab{
   flex:1;
   text-align:center;
-  padding:10px;
+  padding:8px;
   cursor:pointer;
   opacity:0.6;
   border-bottom:2px solid transparent;
@@ -58,59 +58,73 @@ body{
   border-bottom:2px solid #00d09c;
 }
 .input-group{
-  margin-top:14px;
+  margin-top:12px;
 }
 label{
-  font-size:13px;
+  font-size:12px;
   opacity:0.85;
   display:block;
-  margin-bottom:6px;
+  margin-bottom:5px;
 }
 input, textarea{
   width:100%;
-  padding:14px;
+  padding:12px;
   border:none;
   outline:none;
   border-radius:12px;
   background:rgba(255,255,255,0.12);
   color:#fff;
-  font-size:14px;
+  font-size:13px;
 }
 textarea{
   resize:none;
-  height:90px;
+  height:80px;
 }
 input::placeholder,
 textarea::placeholder{
   color:rgba(255,255,255,0.6);
 }
-.otp-row{
+
+/* Phone with +88 */
+.phone-row{
   display:flex;
-  gap:10px;
+  gap:8px;
+}
+.country{
+  width:70px;
+  text-align:center;
+  background:rgba(255,255,255,0.18);
+  border-radius:12px;
+  padding:12px 0;
+  font-size:13px;
+  font-weight:600;
 }
 .otp-btn{
-  width:110px;
+  width:90px;
   border:none;
   border-radius:12px;
   background:#00d09c;
   color:#000;
+  font-size:13px;
   font-weight:600;
   cursor:pointer;
 }
+
 button{
   width:100%;
-  margin-top:22px;
-  padding:14px;
+  margin-top:20px;
+  padding:13px;
   border:none;
   border-radius:14px;
   background:#00d09c;
   color:#000;
-  font-size:16px;
+  font-size:15px;
   font-weight:600;
   cursor:pointer;
 }
+
 #recaptcha-container{
-  margin-top:10px;
+  margin-top:8px;
 }
 </style>
 </head>
@@ -135,8 +149,9 @@ button{
   <!-- Phone -->
   <div class="input-group">
     <label>মোবাইল নাম্বার</label>
-    <div class="otp-row">
-      <input id="phone" type="tel" placeholder="+8801XXXXXXXXX">
+    <div class="phone-row">
+      <div class="country">+88</div>
+      <input id="phone" type="tel" placeholder="01XXXXXXXXX">
       <button class="otp-btn" type="button" onclick="sendOTP()">OTP</button>
     </div>
   </div>
@@ -195,13 +210,16 @@ window.recaptchaVerifier = new RecaptchaVerifier(
 let confirmationResult;
 
 window.sendOTP = () => {
-  const phone = document.getElementById("phone").value.trim();
-  if(!phone){
-    alert("মোবাইল নাম্বার লিখুন");
+  let phone = document.getElementById("phone").value.trim();
+
+  if(!phone.startsWith("01")){
+    alert("নাম্বার অবশ্যই 01 দিয়ে শুরু হবে");
     return;
   }
 
-  signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
+  const fullPhone = "+88" + phone;
+
+  signInWithPhoneNumber(auth, fullPhone, window.recaptchaVerifier)
     .then(result => {
       confirmationResult = result;
       alert("OTP পাঠানো হয়েছে");
