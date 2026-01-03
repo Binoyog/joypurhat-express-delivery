@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard | Joypurhat Express</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:Segoe UI, sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
+}
+.header{
+  padding:16px;
+  font-size:22px;
+  font-weight:700;
+  color:#00ffd5;
+}
+.section{
+  padding:15px;
+}
+.card{
+  background:rgba(255,255,255,0.12);
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:10px;
+}
+.btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+}
+.edit{background:#00ffd5;}
+.delete{background:#ff4d4d;color:#fff;}
+.done{background:#4caf50;color:#fff;}
+small{opacity:.8}
+</style>
+</head>
+
+<body>
+
+<div class="header">🛡️ Admin Dashboard</div>
+
+<!-- PRODUCTS -->
+<div class="section">
+  <h3>🧺 Products</h3>
+  <div id="productList"></div>
+</div>
+
+<!-- ORDERS -->
+<div class="section">
+  <h3>📦 Orders</h3>
+  <div id="orderList"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } 
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* ---------------- PRODUCTS ---------------- */
+async function loadProducts(){
+  productList.innerHTML="";
+  const snap = await getDocs(collection(db,"products"));
+  snap.forEach(d=>{
+    const p = d.data();
+    productList.innerHTML += `
+      <div class="card">
+        <b>${p.name}</b><br>
+        💰 ${p.price} টাকা<br>
+        <small>ID: ${d.id}</small><br><br>
+        <button class="btn edit" onclick="editProduct('${d.id}','${p.name}','${p.price}')">Edit</button>
+        <button class="btn delete" onclick="deleteProduct('${d.id}')">Delete</button>
+      </div>`;
+  });
+}
+
+window.editProduct = async(id,name,price)=>{
+  const newName = prompt("Product Name",name);
+  const newPrice = prompt("Price",price);
+  if(!newName || !newPrice) return;
+  await updateDoc(doc(db,"products",id),{
+    name:newName,
+    price:Number(newPrice)
+  });
+  loadProducts();
+};
+
+window.deleteProduct = async(id)=>{
+  if(confirm("Delete this product?")){
+    await deleteDoc(doc(db,"products",id));
+    loadProducts();
+  }
+};
+
+/* ---------------- ORDERS ---------------- */
+async function loadOrders(){
+  orderList.innerHTML="";
+  const snap = await getDocs(collection(db,"orders"));
+  snap.forEach(d=>{
+    const o = d.data();
+    orderList.innerHTML += `
+      <div class="card">
+        👤 ${o.customerName}<br>
+        📞 ${o.phone}<br>
+        🧾 ${o.product}<br>
+        💰 ${o.amount} টাকা<br>
+        📌 Status: <b>${o.status}</b><br><br>
+        ${o.status==="pending" ?
+        `<button class="btn done" onclick="markDelivered('${d.id}')">Mark Delivered</button>`:""}
+      </div>`;
+  });
+}
+
+window.markDelivered = async(id)=>{
+  await updateDoc(doc(db,"orders",id),{
+    status:"delivered"
+  });
+  loadOrders();
+};
+
+loadProducts();
+loadOrders();
+</script>
+
+</body>
+</html>
