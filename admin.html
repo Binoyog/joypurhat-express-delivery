@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Category Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Segoe UI;background:#f2f4f7;margin:0;padding:15px;}
+h2{margin-top:0}
+input,select,button{
+  width:100%;padding:10px;margin:6px 0;
+}
+button{background:#2c5364;color:#fff;border:none}
+</style>
+</head>
+<body>
+
+<h2 id="title"></h2>
+
+<h3>➕ দোকান যোগ</h3>
+<input id="shopName" placeholder="Shop Name">
+<input id="shopImage" placeholder="Shop Image URL">
+<button onclick="addShop()">Add Shop</button>
+
+<hr>
+
+<h3>➕ প্রোডাক্ট যোগ</h3>
+<select id="shopSelect">
+  <option value="">দোকান ছাড়া</option>
+</select>
+<input id="productName" placeholder="Product Name">
+<input id="price" placeholder="Price">
+<input id="image" placeholder="Image URL">
+<button onclick="addProduct()">Add Product</button>
+
+<!-- 🔥 Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore,collection,addDoc,getDocs,query,where,serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCiKuc8l-6RTZWf5FwUMEbUuMiMUUQ3lYM",
+  authDomain: "joypurhat-express-delivery.firebaseapp.com",
+  projectId: "joypurhat-express-delivery",
+  storageBucket: "joypurhat-express-delivery.firebasestorage.app",
+  messagingSenderId: "423594341774",
+  appId: "1:423594341774:web:fd33f5a2d368e79e3e20df"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const url = new URLSearchParams(location.search);
+const categoryId = url.get("cat");
+document.getElementById("title").innerText = url.get("name");
+
+async function loadShops(){
+  const q=query(collection(db,"shops"),where("categoryId","==",categoryId));
+  const snap=await getDocs(q);
+  snap.forEach(d=>{
+    shopSelect.innerHTML+=`<option value="${d.id}">${d.data().shopName}</option>`;
+  });
+}
+loadShops();
+
+window.addShop = async()=>{
+  await addDoc(collection(db,"shops"),{
+    categoryId,
+    shopName:shopName.value,
+    shopImage:shopImage.value,
+    isActive:true,
+    createdAt:serverTimestamp()
+  });
+  alert("Shop Added");
+};
+
+window.addProduct = async()=>{
+  await addDoc(collection(db,"products"),{
+    categoryId,
+    shopId: shopSelect.value || null,
+    productName:productName.value,
+    price:price.value,
+    image:image.value,
+    isAvailable:true,
+    createdAt:serverTimestamp()
+  });
+  alert("Product Added");
+};
+</script>
+
+</body>
+</html>
