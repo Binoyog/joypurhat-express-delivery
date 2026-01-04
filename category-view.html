@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Category View | Joypurhat Express</title>
+<style>
+body{margin:0;font-family:Segoe UI;background:#eef2f3}
+.header{
+  padding:15px;
+  background:#203a43;
+  color:#fff;
+  font-size:18px;
+}
+.list{
+  padding:15px;
+}
+.item{
+  background:#fff;
+  padding:15px;
+  margin-bottom:12px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+</style>
+</head>
+<body>
+
+<div class="header" id="title">ক্যাটাগরি</div>
+
+<div class="list" id="list">
+  <div class="item">লোড হচ্ছে...</div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const cat = params.get("cat");
+
+const names = {
+  grocery:"মুদিখানা",
+  pharmacy:"ফার্মেসি",
+  restaurant:"রেস্টুরেন্ট",
+  market:"কাঁচা বাজার",
+  gas:"গ্যাস সিলিন্ডার"
+};
+
+document.getElementById("title").innerText = names[cat] || "ক্যাটাগরি";
+
+document.getElementById("list").innerHTML = `
+  <div class="item">${names[cat]} এর দোকান এখানে দেখাবে</div>
+`;
+</script>
+
+</body>
+</html>
