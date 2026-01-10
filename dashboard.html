@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Biniyog | Customer Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Segoe UI, sans-serif;
+}
+body{
+  margin:0;
+  background:#0f172a;
+  color:#fff;
+}
+.header{
+  padding:15px;
+  background:#020617;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.header h2{
+  margin:0;
+  font-size:18px;
+}
+.logout{
+  background:#ef4444;
+  border:none;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:6px;
+}
+
+.container{
+  padding:15px;
+}
+
+.user-card{
+  background:#020617;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:15px;
+}
+.user-card p{
+  margin:5px 0;
+  font-size:14px;
+  color:#cbd5f5;
+}
+
+.balance-box{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:15px;
+}
+.box{
+  background:linear-gradient(135deg,#1e3a8a,#2563eb);
+  padding:15px;
+  border-radius:12px;
+}
+.box h3{
+  margin:0;
+  font-size:14px;
+  color:#e0e7ff;
+}
+.box p{
+  margin:5px 0 0;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:20px;
+}
+.actions button{
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:bold;
+}
+.deposit{
+  background:#22c55e;
+  color:#022c22;
+}
+.withdraw{
+  background:#facc15;
+  color:#422006;
+}
+
+.section{
+  margin-bottom:20px;
+}
+.section h3{
+  margin-bottom:10px;
+  font-size:16px;
+}
+
+.game-card{
+  background:#020617;
+  padding:15px;
+  border-radius:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.game-card button{
+  background:#38bdf8;
+  color:#020617;
+  border:none;
+  padding:10px 14px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.footer{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#020617;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+}
+.footer a{
+  color:#cbd5f5;
+  text-decoration:none;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>Biniyog Dashboard</h2>
+  <button class="logout">Logout</button>
+</div>
+
+<div class="container">
+
+  <!-- User Info -->
+  <div class="user-card">
+    <p><strong>Name:</strong> Demo User</p>
+    <p><strong>Phone:</strong> 01XXXXXXXXX</p>
+  </div>
+
+  <!-- Balance Section -->
+  <div class="balance-box">
+    <div class="box">
+      <h3>Main Balance</h3>
+      <p>৳ <span id="mainBalance">5000</span></p>
+    </div>
+    <div class="box">
+      <h3>Total Profit</h3>
+      <p>৳ <span id="profitBalance">1200</span></p>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="deposit">Deposit</button>
+    <button class="withdraw">Withdraw</button>
+  </div>
+
+  <!-- Investment Section -->
+  <div class="section">
+    <h3>Active Investment</h3>
+    <div class="game-card">
+      <div>
+        <p>Current Plan</p>
+        <strong>Silver Plan</strong>
+      </div>
+      <button>View</button>
+    </div>
+  </div>
+
+  <!-- Aviator / Game Section -->
+  <div class="section">
+    <h3>Games & Features</h3>
+    <div class="game-card">
+      <div>
+        <strong>Aviator Feature</strong>
+        <p style="font-size:13px;color:#94a3b8">Play & Grow</p>
+      </div>
+      <button onclick="openAviator()">Play</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom Navigation -->
+<div class="footer">
+  <a href="#">Home</a>
+  <a href="#">Plans</a>
+  <a href="#">History</a>
+  <a href="#">Profile</a>
+</div>
+
+<script>
+function openAviator(){
+  alert("Aviator Feature Coming Soon");
+}
+</script>
+
+</body>
+</html>
